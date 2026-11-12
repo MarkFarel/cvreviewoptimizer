@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHLYTICS ATS CV Review & Optimizer — Multi-Template Word Export</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- docx.js v8.5.0 for real Microsoft Word (.docx) generation -->
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.14) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.10) 0px, transparent 50%);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(51, 65, 85, 0.7);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        textarea::-webkit-scrollbar, pre::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        textarea::-webkit-scrollbar-track, pre::-webkit-scrollbar-track, .custom-scroll::-webkit-scrollbar-track {
+            background: #0f172a;
+            border-radius: 8px;
+        }
+        textarea::-webkit-scrollbar-thumb, pre::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 8px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover, pre::-webkit-scrollbar-thumb:hover, .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Header -->
+    <header class="glass-panel border-b border-slate-800/80 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/25">
+                    <i class="fa-solid fa-file-shield text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-white tracking-tight leading-tight">ATS CV Review &amp; Optimizer</h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">AI &amp; Heuristic Resume Scoring + Multi-Template Word (.docx) Export</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+                <span id="engine-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                    <span id="engine-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span id="engine-text">Local ATS Engine</span>
+                </span>
+                <button type="button" id="open-settings-btn" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800/90 border border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-slate-600 transition">
+                    <i class="fa-solid fa-key text-indigo-400"></i>
+                    <span>API Settings</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- API Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="glass-panel rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-400"></i>
+                    Gemini API Settings
+                </h3>
+                <button type="button" id="close-settings-btn" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Optionally enter a Google Gemini API key (<code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300 border border-slate-700">gemini-2.5-flash</code>) to enable deep contextual AI review and rewriting. Without a key, the app uses our built-in <strong class="text-white">Local ATS Engine</strong> automatically.
+                </p>
+                <div>
+                    <label for="api-key-input" class="block text-xs font-semibold text-slate-300 mb-1.5">Gemini API Key (stored in browser localStorage)</label>
+                    <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full rounded-xl bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition">
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between gap-3">
+                <button type="button" id="clear-api-key-btn" class="text-xs font-medium text-rose-400 hover:text-rose-300 px-3 py-1.5 rounded-lg hover:bg-rose-500/10 transition">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Clear Key
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="cancel-settings-btn" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800 transition">
+                        Cancel
+                    </button>
+                    <button type="button" id="save-api-key-btn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition shadow-sm">
+                        Save Key
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Step 1: Two-Column Input Grid -->
+        <section aria-label="CV and Job Description Inputs" class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs flex items-center justify-center font-bold">1</span>
+                        Input Your CV &amp; Target Job Description
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Paste your resume and job posting below, or load realistic samples to test in one click.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left Column: Your Current CV -->
+                <div class="glass-panel rounded-2xl shadow-xl flex flex-col overflow-hidden">
+                    <div class="px-5 py-3.5 border-b border-slate-800/90 bg-slate-900/60 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-user-tie text-indigo-400"></i>
+                            <h3 class="font-semibold text-sm text-slate-200">Your Current CV</h3>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="load-sample-cv-btn" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/25 transition">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                Load Sample CV
+                            </button>
+                            <label for="cv-file-input" class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">
+                                <i class="fa-solid fa-upload text-slate-400"></i>
+                                Upload .txt/.md
+                            </label>
+                            <input type="file" id="cv-file-input" accept=".txt,.md" class="hidden">
+                            <button type="button" id="clear-cv-btn" title="Clear CV" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <textarea id="cv-input" rows="13" placeholder="Paste your current CV / Resume here...&#10;&#10;Include your contact header, summary, work experience, skills, and education." class="w-full flex-1 resize-y rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition leading-relaxed"></textarea>
+                        <div class="mt-2 flex justify-between items-center text-xs text-slate-500">
+                            <span id="cv-char-count">0 characters</span>
+                            <span>Supports .txt and .md upload</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Target Job Description -->
+                <div class="glass-panel rounded-2xl shadow-xl flex flex-col overflow-hidden">
+                    <div class="px-5 py-3.5 border-b border-slate-800/90 bg-slate-900/60 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-briefcase text-sky-400"></i>
+                            <h3 class="font-semibold text-sm text-slate-200">Target Job Description</h3>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="load-sample-jd-btn" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-sky-500/15 text-sky-300 border border-sky-500/30 hover:bg-sky-500/25 transition">
+                                <i class="fa-solid fa-file-lines"></i>
+                                Load Sample JD
+                            </button>
+                            <button type="button" id="clear-jd-btn" title="Clear Job Description" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <textarea id="jd-input" rows="13" placeholder="Paste the target job description here...&#10;&#10;Include job title, responsibilities, required tech stack, and qualifications." class="w-full flex-1 resize-y rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition leading-relaxed"></textarea>
+                        <div class="mt-2 flex justify-between items-center text-xs text-slate-500">
+                            <span id="jd-char-count">0 characters</span>
+                            <span>Target role requirements</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Primary CTA Button -->
+            <div class="flex justify-center pt-2">
+                <button type="button" id="analyze-btn" class="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-xl shadow-indigo-600/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto min-w-[310px]">
+                    <i id="analyze-icon" class="fa-solid fa-magnifying-glass-chart text-lg"></i>
+                    <i id="analyze-spinner" class="fa-solid fa-circle-notch fa-spin text-lg hidden"></i>
+                    <span id="analyze-btn-text">Analyze CV Against Job Description</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 2: Analysis Output Dashboard -->
+        <section id="results-section" class="hidden space-y-6">
+
+            <!-- Engine Status Banner -->
+            <div id="status-banner" class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border">
+                <div class="flex items-start gap-3">
+                    <i id="status-banner-icon" class="fa-solid fa-microchip mt-1 text-amber-400"></i>
+                    <div class="text-xs sm:text-sm">
+                        <span id="status-banner-title" class="font-bold">Local ATS Engine Active:</span>
+                        <span id="status-banner-desc" class="ml-1 opacity-90">Analyzed using our built-in deterministic keyword &amp; heuristic scoring engine.</span>
+                    </div>
+                </div>
+                <button type="button" id="banner-add-key-btn" class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition shadow-sm">
+                    <i class="fa-solid fa-key"></i>
+                    Add API Key
+                </button>
+            </div>
+
+            <!-- Score Gauge + 4-Category Breakdown -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Animated Circular SVG ATS Score Gauge -->
+                <div class="glass-panel rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">ATS Match Score</span>
+                    <div class="relative w-44 h-44 flex items-center justify-center">
+                        <svg class="w-44 h-44" viewBox="0 0 120 120">
+                            <circle class="text-slate-800" stroke-width="10" stroke="currentColor" fill="transparent" r="52" cx="60" cy="60" />
+                            <circle id="score-ring" class="progress-ring__circle text-indigo-500" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="52" cx="60" cy="60" stroke-dasharray="326.73" stroke-dashoffset="326.73" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <div class="flex items-baseline">
+                                <span id="ats-score-value" class="text-4xl font-extrabold text-white">0</span>
+                                <span class="text-lg font-bold text-slate-400 ml-0.5">%</span>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-400 mt-0.5">ATS Compatibility</span>
+                        </div>
+                    </div>
+                    <div id="ats-score-verdict" class="mt-4 text-xs font-semibold px-3.5 py-1.5 rounded-full">
+                        Evaluating...
+                    </div>
+                </div>
+
+                <!-- 4-Category Score Breakdown -->
+                <div class="lg:col-span-2 glass-panel rounded-2xl shadow-xl p-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-bar text-indigo-400"></i>
+                            4-Category Score Breakdown
+                        </h3>
+                        <span class="text-xs text-slate-400">Weighted ATS Rubric</span>
+                    </div>
+                    <div id="breakdown-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+            </div>
+
+            <!-- Matched & Missing Keywords -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-panel rounded-2xl shadow-xl p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                            Matched Keywords
+                        </h3>
+                        <span id="matched-count" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">0</span>
+                    </div>
+                    <div id="matched-keywords-list" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="glass-panel rounded-2xl shadow-xl p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+                            Missing High-Impact Keywords
+                        </h3>
+                        <span id="missing-count" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">0</span>
+                    </div>
+                    <div id="missing-keywords-list" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Actionable Recommendations -->
+            <div class="glass-panel rounded-2xl shadow-xl p-6">
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                    Actionable Recommendations
+                </h3>
+                <ul id="recommendations-list" class="space-y-3"></ul>
+            </div>
+
+            <!-- Interactive Prompt Card -->
+            <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-violet-600 rounded-2xl shadow-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 border border-indigo-400/30">
+                <div class="space-y-2 text-center md:text-left">
+                    <h3 class="text-xl font-extrabold tracking-tight">Would you like me to automatically edit and optimize your CV for this role?</h3>
+                    <p class="text-indigo-100 text-sm max-w-2xl leading-relaxed">
+                        I will integrate missing high-impact keywords, strengthen bullet points with measurable impact, standardize ATS section headers, and unlock 3 downloadable Microsoft Word (.docx) template versions.
+                    </p>
+                </div>
+                <button type="button" id="optimize-btn" class="shrink-0 inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-xl bg-white text-indigo-700 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-[0.99] transition disabled:opacity-70 disabled:cursor-not-allowed w-full md:w-auto">
+                    <i id="optimize-icon" class="fa-solid fa-wand-sparkles"></i>
+                    <i id="optimize-spinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
+                    <span id="optimize-btn-text">Yes, Optimize My CV</span>
+                </button>
+            </div>
+
+        </section>
+
+        <!-- Step 3 & 4: CV Optimization, Editable Comparison & Multiple Word (.docx) Versions -->
+        <section id="optimized-section" class="hidden space-y-8">
+            
+            <!-- Optimization Summary & Side-by-Side Editable Comparison -->
+            <div class="glass-panel rounded-2xl shadow-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-800 bg-slate-900/80 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-file-pen text-indigo-400"></i>
+                            Optimized CV &amp; Side-by-Side Comparison
+                        </h3>
+                        <p class="text-xs text-slate-400">Edit the Optimized CV box below—bullet points, skill categories, and date alignments update live in the Word export.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button type="button" id="copy-cv-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-regular fa-copy text-slate-400"></i>
+                            Copy Text
+                        </button>
+                        <button type="button" id="download-txt-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-file-lines text-slate-400"></i>
+                            Download .txt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Key Improvements Made -->
+                <div class="px-6 py-4 bg-emerald-500/10 border-b border-emerald-500/20">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-2.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-sparkles"></i>
+                        Key Improvements Made
+                    </h4>
+                    <ul id="improvements-list" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs sm:text-sm text-emerald-100"></ul>
+                </div>
+
+                <!-- Side-by-Side Comparison -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+                    <div class="p-5 flex flex-col">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Original CV (Read-Only)</span>
+                            <span class="text-[11px] text-slate-500">Baseline</span>
+                        </div>
+                        <pre id="original-cv-preview" class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-slate-300 bg-slate-950/90 rounded-xl p-4 border border-slate-800 h-[460px] overflow-y-auto leading-relaxed"></pre>
+                    </div>
+                    <div class="p-5 flex flex-col">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                Optimized CV (Editable)
+                            </span>
+                            <span class="text-[11px] text-indigo-300/80">Live synced with Word export</span>
+                        </div>
+                        <textarea id="optimized-cv-editor" class="w-full font-sans text-xs sm:text-sm text-slate-100 bg-slate-950/90 rounded-xl p-4 border border-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 h-[460px] resize-y leading-relaxed"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Download Microsoft Word (.docx) Versions -->
+            <div class="glass-panel rounded-2xl shadow-xl p-6 sm:p-8 space-y-6 border border-blue-500/30">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-blue-500/15 text-blue-300 border border-blue-500/30 text-xs font-bold mb-2">
+                            <i class="fa-solid fa-file-word"></i>
+                            MICROSOFT WORD (.DOCX) MULTI-TEMPLATE EXPORT
+                        </div>
+                        <h3 class="text-xl font-extrabold text-white">Download Microsoft Word (.docx) Versions</h3>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1">Strict section boundary detection, justified summary paragraphs, clean bullet lists, and flush-right dates.</p>
+                    </div>
+                    <button type="button" id="download-all-docx-btn" class="inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/25 transition shrink-0">
+                        <i class="fa-solid fa-download"></i>
+                        Download All 3 Word Versions
+                    </button>
+                </div>
+
+                <!-- 3 Professional Word Template Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Version 1: Classic ATS Standard -->
+                    <div class="bg-slate-950/80 rounded-2xl border border-slate-800 hover:border-indigo-500/50 p-5 flex flex-col justify-between transition group">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="w-10 h-10 rounded-xl bg-slate-800 text-slate-200 flex items-center justify-center border border-slate-700 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition">
+                                    <i class="fa-solid fa-align-left text-base"></i>
+                                </span>
+                                <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                    100% Legacy ATS Safe
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-white">1. Classic ATS Standard</h4>
+                                <p class="text-xs text-slate-400 font-mono mt-0.5">Optimized_CV_ATS_Classic.docx</p>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Single-column Calibri layout with strict section boundaries, justified summaries, right-aligned tab-stop dates, and hanging-indent Word bullet lists.
+                            </p>
+                        </div>
+                        <button type="button" id="download-docx-classic" class="mt-5 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-indigo-600 text-white text-xs font-bold border border-slate-700 hover:border-indigo-500 transition">
+                            <i class="fa-solid fa-file-word text-blue-400 group-hover:text-white"></i>
+                            Download Classic (.docx)
+                        </button>
+                    </div>
+
+                    <!-- Version 2: Modern Executive -->
+                    <div class="bg-slate-950/80 rounded-2xl border border-slate-800 hover:border-blue-500/50 p-5 flex flex-col justify-between transition group">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="w-10 h-10 rounded-xl bg-blue-950 text-blue-300 flex items-center justify-center border border-blue-800/60 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-500 transition">
+                                    <i class="fa-solid fa-crown text-base"></i>
+                                </span>
+                                <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                                    Recruiter Favorite
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-white">2. Modern Executive</h4>
+                                <p class="text-xs text-slate-400 font-mono mt-0.5">Optimized_CV_Modern_Executive.docx</p>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Deep Navy (<code class="text-blue-300">#1E3A8A</code>) section headers, two-column role date tables, shaded summary callout box, and hanging-indent bullets.
+                            </p>
+                        </div>
+                        <button type="button" id="download-docx-executive" class="mt-5 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white text-xs font-bold border border-slate-700 hover:border-blue-500 transition">
+                            <i class="fa-solid fa-file-word text-blue-400 group-hover:text-white"></i>
+                            Download Executive (.docx)
+                        </button>
+                    </div>
+
+                    <!-- Version 3: Minimalist Tech / Compact -->
+                    <div class="bg-slate-950/80 rounded-2xl border border-slate-800 hover:border-sky-500/50 p-5 flex flex-col justify-between transition group">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="w-10 h-10 rounded-xl bg-sky-950 text-sky-300 flex items-center justify-center border border-sky-800/60 group-hover:bg-sky-600 group-hover:text-white group-hover:border-sky-500 transition">
+                                    <i class="fa-solid fa-code text-base"></i>
+                                </span>
+                                <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                                    High-Density Tech
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-white">3. Minimalist Tech / Compact</h4>
+                                <p class="text-xs text-slate-400 font-mono mt-0.5">Optimized_CV_Tech_Compact.docx</p>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                High-density 0.5-inch margins, Segoe UI hierarchy, right-aligned role dates, categorized 2-column Skills Matrix table, and tight hanging-indent bullets.
+                            </p>
+                        </div>
+                        <button type="button" id="download-docx-tech" class="mt-5 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-sky-600 text-white text-xs font-bold border border-slate-700 hover:border-sky-500 transition">
+                            <i class="fa-solid fa-file-word text-sky-400 group-hover:text-white"></i>
+                            Download Tech Compact (.docx)
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Live Parsed Word Layout Preview -->
+                <div class="pt-4 border-t border-slate-800/90 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-eye text-indigo-400"></i>
+                            Live Word Document Structure &amp; Alignment Preview
+                        </span>
+                        <span id="parsed-stats-badge" class="text-[11px] font-medium text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
+                            0 Sections &bull; 0 Bullets
+                        </span>
+                    </div>
+                    <div id="word-structure-preview" class="bg-white text-slate-900 rounded-xl p-6 sm:p-8 shadow-inner max-h-[420px] overflow-y-auto custom-scroll font-sans text-xs sm:text-sm space-y-4">
+                        <!-- Dynamically rendered structured preview -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 py-6 mt-12 bg-slate-950/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
+            Techlytics Automated ATS CV Review &amp; Optimizer &bull; Dual-Engine Scoring &amp; Multi-Template Microsoft Word (.docx) Generator
+        </div>
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ==========================================
+            // 1. Configuration & State
+            // ==========================================
+            const GEMINI_MODEL = "gemini-2.5-flash";
+            const STORAGE_KEY_API = "gemini_api_key";
+            const API_TIMEOUT_MS = 15000;
+
+            let lastAnalysisData = null;
+
+            // ==========================================
+            // 2. DOM Element References
+            // ==========================================
+            const cvInput = document.getElementById('cv-input');
+            const jdInput = document.getElementById('jd-input');
+            const cvCharCount = document.getElementById('cv-char-count');
+            const jdCharCount = document.getElementById('jd-char-count');
+            const cvFileInput = document.getElementById('cv-file-input');
+
+            const loadSampleCvBtn = document.getElementById('load-sample-cv-btn');
+            const loadSampleJdBtn = document.getElementById('load-sample-jd-btn');
+            const clearCvBtn = document.getElementById('clear-cv-btn');
+            const clearJdBtn = document.getElementById('clear-jd-btn');
+
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const analyzeIcon = document.getElementById('analyze-icon');
+            const analyzeSpinner = document.getElementById('analyze-spinner');
+            const analyzeBtnText = document.getElementById('analyze-btn-text');
+
+            const resultsSection = document.getElementById('results-section');
+            const statusBanner = document.getElementById('status-banner');
+            const statusBannerIcon = document.getElementById('status-banner-icon');
+            const statusBannerTitle = document.getElementById('status-banner-title');
+            const statusBannerDesc = document.getElementById('status-banner-desc');
+            const bannerAddKeyBtn = document.getElementById('banner-add-key-btn');
+
+            const scoreRing = document.getElementById('score-ring');
+            const atsScoreValue = document.getElementById('ats-score-value');
+            const atsScoreVerdict = document.getElementById('ats-score-verdict');
+            const breakdownContainer = document.getElementById('breakdown-container');
+            const matchedCount = document.getElementById('matched-count');
+            const missingCount = document.getElementById('missing-count');
+            const matchedKeywordsList = document.getElementById('matched-keywords-list');
+            const missingKeywordsList = document.getElementById('missing-keywords-list');
+            const recommendationsList = document.getElementById('recommendations-list');
+
+            const optimizeBtn = document.getElementById('optimize-btn');
+            const optimizeIcon = document.getElementById('optimize-icon');
+            const optimizeSpinner = document.getElementById('optimize-spinner');
+            const optimizeBtnText = document.getElementById('optimize-btn-text');
+
+            const optimizedSection = document.getElementById('optimized-section');
+            const improvementsList = document.getElementById('improvements-list');
+            const originalCvPreview = document.getElementById('original-cv-preview');
+            const optimizedCvEditor = document.getElementById('optimized-cv-editor');
+            const copyCvBtn = document.getElementById('copy-cv-btn');
+            const downloadTxtBtn = document.getElementById('download-txt-btn');
+
+            // Word Template Export Buttons & Preview
+            const downloadDocxClassicBtn = document.getElementById('download-docx-classic');
+            const downloadDocxExecutiveBtn = document.getElementById('download-docx-executive');
+            const downloadDocxTechBtn = document.getElementById('download-docx-tech');
+            const downloadAllDocxBtn = document.getElementById('download-all-docx-btn');
+            const wordStructurePreview = document.getElementById('word-structure-preview');
+            const parsedStatsBadge = document.getElementById('parsed-stats-badge');
+
+            // Settings Modal & Header Badge
+            const engineBadge = document.getElementById('engine-badge');
+            const engineDot = document.getElementById('engine-dot');
+            const engineText = document.getElementById('engine-text');
+            const openSettingsBtn = document.getElementById('open-settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const closeSettingsBtn = document.getElementById('close-settings-btn');
+            const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
+            const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+            const clearApiKeyBtn = document.getElementById('clear-api-key-btn');
+            const apiKeyInput = document.getElementById('api-key-input');
+
+            // ==========================================
+            // 3. Realistic Sample CV & JD Data
+            // ==========================================
+            const SAMPLE_CV = `ALEXANDER MERCER
+Senior Data & Analytics Engineer
+alex.mercer@email.com | +1 (415) 890-3421 | San Francisco, CA | linkedin.com/in/alexmercer-data
+
+SUMMARY
+Results-driven Data & Analytics Engineer with 6+ years of experience designing scalable ETL pipelines, dimensional data warehouses, and executive BI dashboards. Skilled in SQL, Python, dbt, and Snowflake with a proven track record of turning raw operational data into actionable business insights.
+
+EXPERIENCE
+Senior Data Analyst & Analytics Engineer | FinPulse Technologies | 2022 - Present
+- Built automated ELT data models using dbt and SQL in Snowflake, reducing daily reporting latency by 45%.
+- Worked with product and finance teams to define KPIs and build executive dashboards in Tableau.
+- Wrote Python scripts to ingest data from REST APIs and third-party SaaS platforms.
+- Improved query performance on large fact tables by partitioning and clustering datasets.
+
+Data Analyst | RetailMetric Corp | 2020 - 2022
+- Analyzed customer retention, cohort churn, and marketing attribution across 1.2M+ users.
+- Created automated SQL reporting pipelines in PostgreSQL and BigQuery.
+- Helped stakeholders run A/B tests and presented statistical findings to leadership.
+
+EDUCATION
+B.S. in Statistics & Data Science | University of California, Davis | 2020
+
+TECHNICAL SKILLS
+BI Development & Visualization
+Power BI, Tableau, Dashboard Development, Dashboard Optimization, Executive Reporting, KPI Development, Data Storytelling
+Data Engineering & Warehousing
+SQL, Python, Snowflake, dbt, BigQuery, PostgreSQL, ETL/ELT, Dimensional Modeling, Pandas, Git`;
+
+            const SAMPLE_JD = `Lead Analytics Engineer — Cloud Data Platform
+Location: Hybrid / San Francisco, CA
+
+About the Role:
+We are seeking a Lead Analytics Engineer to architect and scale our modern data stack. You will own end-to-end data modeling, orchestrate production workflows, enforce data quality, and partner with Data Science and Product Engineering.
+
+Key Responsibilities & Requirements:
+- 5+ years of hands-on experience in Analytics Engineering or Data Engineering.
+- Expert-level SQL and Python programming skills for data transformation and automation.
+- Deep production experience with Snowflake, dbt (Data Build Tool), and Apache Airflow orchestration.
+- Strong understanding of dimensional modeling (Kimball), data governance, and CI/CD for data pipelines.
+- Experience with AWS cloud services (S3, IAM, Redshift) and Looker or Power BI visualization.
+- Track record of implementing automated data quality testing, observability, and documentation.
+- Strong stakeholder communication skills and experience mentoring analytics team members.`;
+
+            // ==========================================
+            // 4. Utilities & Engine Badge Helpers
+            // ==========================================
+            function getSavedApiKey() {
+                return (localStorage.getItem(STORAGE_KEY_API) || '').trim();
+            }
+
+            function updateEngineIndicators(isAiActive, fallbackReason = '') {
+                if (isAiActive) {
+                    engineBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/15 text-indigo-300 border border-indigo-500/30';
+                    engineDot.className = 'w-2 h-2 rounded-full bg-indigo-400 animate-pulse';
+                    engineText.textContent = 'Gemini AI Engine';
+
+                    statusBanner.className = 'glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-indigo-500/30 bg-indigo-500/10 text-indigo-200';
+                    statusBannerIcon.className = 'fa-solid fa-wand-magic-sparkles mt-1 text-indigo-400';
+                    statusBannerTitle.textContent = 'Gemini AI Engine Active:';
+                    statusBannerDesc.textContent = 'Deep semantic analysis and tailored CV rewriting powered by gemini-2.5-flash.';
+                    bannerAddKeyBtn.classList.add('hidden');
+                } else {
+                    engineBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30';
+                    engineDot.className = 'w-2 h-2 rounded-full bg-amber-400';
+                    engineText.textContent = 'Local ATS Engine';
+
+                    statusBanner.className = 'glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-amber-500/30 bg-amber-500/10 text-amber-200';
+                    statusBannerIcon.className = 'fa-solid fa-microchip mt-1 text-amber-400';
+                    statusBannerTitle.textContent = 'Local ATS Engine Active:';
+                    statusBannerDesc.textContent = fallbackReason
+                        ? `Gemini API unavailable (${fallbackReason}). Seamlessly evaluated using our deterministic ATS heuristic engine.`
+                        : 'Evaluated using our built-in deterministic ATS keyword & heuristic engine. Add a Gemini API key for AI rewriting.';
+                    bannerAddKeyBtn.classList.remove('hidden');
+                }
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = String(str ?? '');
+                return div.innerHTML;
+            }
+
+            function showToast(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const styles = {
+                    info: 'bg-slate-800 text-slate-100 border-slate-700',
+                    success: 'bg-emerald-600 text-white border-emerald-500',
+                    error: 'bg-rose-600 text-white border-rose-500',
+                    warning: 'bg-amber-500 text-slate-950 border-amber-400'
+                };
+                const icons = {
+                    info: 'fa-circle-info',
+                    success: 'fa-circle-check',
+                    error: 'fa-circle-exclamation',
+                    warning: 'fa-triangle-exclamation'
+                };
+                toast.className = `pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl border shadow-2xl text-xs sm:text-sm font-semibold transition-all duration-300 ${styles[type] || styles.info}`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid ${icons[type] || icons.info}"></i>
+                        <span>${escapeHtml(message)}</span>
+                    </div>
+                    <button type="button" class="opacity-75 hover:opacity-100 ml-2" aria-label="Dismiss">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+                toast.querySelector('button').addEventListener('click', () => toast.remove());
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', '-translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            function updateCharCounts() {
+                cvCharCount.textContent = `${cvInput.value.length.toLocaleString()} characters`;
+                jdCharCount.textContent = `${jdInput.value.length.toLocaleString()} characters`;
+            }
+
+            updateEngineIndicators(Boolean(getSavedApiKey()));
+
+            // ==========================================
+            // 5. Settings Modal Listeners
+            // ==========================================
+            function openSettingsModal() {
+                apiKeyInput.value = getSavedApiKey();
+                settingsModal.classList.remove('hidden');
+                settingsModal.classList.add('flex');
+            }
+
+            function closeSettingsModal() {
+                settingsModal.classList.add('hidden');
+                settingsModal.classList.remove('flex');
+            }
+
+            openSettingsBtn.addEventListener('click', openSettingsModal);
+            bannerAddKeyBtn.addEventListener('click', openSettingsModal);
+            closeSettingsBtn.addEventListener('click', closeSettingsModal);
+            cancelSettingsBtn.addEventListener('click', closeSettingsModal);
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) closeSettingsModal();
+            });
+
+            saveApiKeyBtn.addEventListener('click', () => {
+                const key = apiKeyInput.value.trim();
+                if (key) {
+                    localStorage.setItem(STORAGE_KEY_API, key);
+                    updateEngineIndicators(true);
+                    showToast('Gemini API key saved! Gemini AI Engine enabled.', 'success');
+                } else {
+                    localStorage.removeItem(STORAGE_KEY_API);
+                    updateEngineIndicators(false);
+                    showToast('API key cleared. Switched to Local ATS Engine.', 'info');
+                }
+                closeSettingsModal();
+            });
+
+            clearApiKeyBtn.addEventListener('click', () => {
+                localStorage.removeItem(STORAGE_KEY_API);
+                apiKeyInput.value = '';
+                updateEngineIndicators(false);
+                showToast('Gemini API key removed.', 'info');
+                closeSettingsModal();
+            });
+
+            // ==========================================
+            // 6. Input & Sample Load Listeners
+            // ==========================================
+            cvInput.addEventListener('input', updateCharCounts);
+            jdInput.addEventListener('input', updateCharCounts);
+
+            loadSampleCvBtn.addEventListener('click', () => {
+                cvInput.value = SAMPLE_CV;
+                updateCharCounts();
+                showToast('Loaded Senior Data & Analytics Engineer sample CV.', 'info');
+            });
+
+            loadSampleJdBtn.addEventListener('click', () => {
+                jdInput.value = SAMPLE_JD;
+                updateCharCounts();
+                showToast('Loaded Lead Analytics Engineer sample Job Description.', 'info');
+            });
+
+            clearCvBtn.addEventListener('click', () => {
+                cvInput.value = '';
+                updateCharCounts();
+            });
+
+            clearJdBtn.addEventListener('click', () => {
+                jdInput.value = '';
+                updateCharCounts();
+            });
+
+            cvFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const name = file.name.toLowerCase();
+                if (!name.endsWith('.txt') && !name.endsWith('.md')) {
+                    showToast('Please upload a .txt or .md resume file.', 'warning');
+                    cvFileInput.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    cvInput.value = ev.target.result;
+                    updateCharCounts();
+                    showToast(`Loaded "${file.name}"`, 'success');
+                };
+                reader.onerror = () => showToast('Failed to read uploaded file.', 'error');
+                reader.readAsText(file);
+                cvFileInput.value = '';
+            });
+
+            // ==========================================
+            // 7. Gemini API Caller (15s AbortController)
+            // ==========================================
+            async function callGeminiAPI(apiKey, payload) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error?.message || `HTTP ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!text) throw new Error('Empty response from Gemini API');
+                    return JSON.parse(text);
+                } finally {
+                    clearTimeout(timeoutId);
+                }
+            }
+
+            // ==========================================
+            // 8. Local ATS Keyword & Heuristic Analyzer
+            // ==========================================
+            const STOP_WORDS = new Set([
+                'about', 'above', 'after', 'again', 'against', 'all', 'also', 'and', 'any', 'are', 'because', 'been',
+                'before', 'being', 'below', 'between', 'both', 'but', 'can', 'could', 'did', 'does', 'doing', 'down',
+                'during', 'each', 'few', 'for', 'from', 'further', 'had', 'has', 'have', 'having', 'here', 'hers',
+                'herself', 'him', 'himself', 'his', 'how', 'into', 'its', 'itself', 'just', 'more', 'most', 'must',
+                'myself', 'nor', 'not', 'now', 'off', 'once', 'only', 'other', 'our', 'ours', 'ourselves', 'out',
+                'over', 'own', 'same', 'she', 'should', 'some', 'such', 'than', 'that', 'the', 'their', 'theirs',
+                'them', 'themselves', 'then', 'there', 'these', 'they', 'this', 'those', 'through', 'too', 'under',
+                'until', 'very', 'was', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why',
+                'will', 'with', 'would', 'you', 'your', 'yours', 'yourself', 'yourselves', 'work', 'working', 'role',
+                'team', 'experience', 'years', 'plus', 'strong', 'skills', 'ability', 'excellent', 'looking', 'using',
+                'build', 'building', 'platform', 'lead', 'development', 'next', 'generation', 'proven', 'track', 'record',
+                'seeking', 'modern', 'stack', 'own', 'end', 'partner', 'key', 'responsibilities', 'requirements', 'hands'
+            ]);
+
+            function extractTargetKeywords(jdText) {
+                const multiWordTerms = [
+                    'Apache Airflow', 'Power BI', 'CI/CD', 'Data Modeling', 'Dimensional Modeling',
+                    'Data Quality', 'Data Governance', 'Data Warehouse', 'Machine Learning', 'A/B Testing',
+                    'REST API', 'Restful APIs', 'Core Web Vitals', 'Project Management', 'Stakeholder Management'
+                ];
+                const foundMulti = [];
+                const jdLower = jdText.toLowerCase();
+                for (const phrase of multiWordTerms) {
+                    if (jdLower.includes(phrase.toLowerCase())) {
+                        foundMulti.push(phrase);
+                    }
+                }
+
+                const tokens = jdText.match(/\b[A-Za-z][A-Za-z0-9+#.\-\/]{1,}\b/g) || [];
+                const freq = new Map();
+                for (const raw of tokens) {
+                    const lower = raw.toLowerCase();
+                    if (lower.length < 3 || STOP_WORDS.has(lower)) continue;
+                    if (foundMulti.some(m => m.toLowerCase().includes(lower))) continue;
+                    if (!freq.has(lower)) {
+                        freq.set(lower, { display: raw, count: 1 });
+                    } else {
+                        freq.get(lower).count += 1;
+                    }
+                }
+
+                const singleKeywords = Array.from(freq.values())
+                    .sort((a, b) => b.count - a.count || b.display.length - a.display.length)
+                    .slice(0, 16)
+                    .map(item => item.display);
+
+                return [...foundMulti, ...singleKeywords].slice(0, 20);
+            }
+
+            function runLocalATSAnalysis(cvText, jdText) {
+                const targetKeywords = extractTargetKeywords(jdText);
+                const cvLower = cvText.toLowerCase();
+
+                const matchedKeywords = [];
+                const missingKeywords = [];
+                for (const kw of targetKeywords) {
+                    if (cvLower.includes(kw.toLowerCase())) {
+                        matchedKeywords.push(kw);
+                    } else {
+                        missingKeywords.push(kw);
+                    }
+                }
+
+                const keywordMatchScore = targetKeywords.length > 0
+                    ? Math.round((matchedKeywords.length / targetKeywords.length) * 100)
+                    : 55;
+
+                const techHits = matchedKeywords.filter(k => /^[A-Z0-9+#.\-\/]+$/i.test(k)).length;
+                const skillsTechScore = Math.min(100, Math.round(keywordMatchScore * 0.8 + Math.min(25, techHits * 4)));
+
+                const metricMatches = cvText.match(/\d+%|\$\d+|\d+\+?\s*(years|clients|users|projects|M|K|x)/gi) || [];
+                const wordCount = cvText.split(/\s+/).filter(Boolean).length;
+                const experienceScore = Math.min(100, Math.round(45 + Math.min(30, metricMatches.length * 8) + (wordCount >= 140 ? 20 : 8)));
+
+                const hasHeaders = /(summary|experience|education|skills|projects|certifications)/i.test(cvText);
+                const hasBullets = /[-•*]/.test(cvText);
+                const hasContact = /(@|\+?\d[\d\s\-().]{7,}|linkedin\.com)/i.test(cvText);
+                const formattingScore = Math.min(100, (hasHeaders ? 45 : 20) + (hasBullets ? 30 : 5) + (hasContact ? 25 : 5));
+
+                const atsScore = Math.round(
+                    keywordMatchScore * 0.35 +
+                    skillsTechScore * 0.25 +
+                    experienceScore * 0.25 +
+                    formattingScore * 0.15
+                );
+
+                const recommendations = [];
+                if (missingKeywords.length > 0) {
+                    recommendations.push({
+                        priority: 'HIGH IMPACT',
+                        text: `Integrate missing high-priority JD keywords naturally into your Skills and Experience sections: ${missingKeywords.slice(0, 7).join(', ')}.`
+                    });
+                }
+                if (metricMatches.length < 3) {
+                    recommendations.push({
+                        priority: 'HIGH IMPACT',
+                        text: 'Quantify more experience bullets with concrete metrics (e.g., % latency reduction, pipeline throughput, cost savings, or dataset scale).'
+                    });
+                }
+                if (!hasHeaders || !hasBullets) {
+                    recommendations.push({
+                        priority: 'FORMATTING',
+                        text: 'Use standard uppercase ATS headers (SUMMARY, EXPERIENCE, SKILLS, EDUCATION) and clean bullet points (- or •).'
+                    });
+                }
+                recommendations.push({
+                    priority: 'TAILORING',
+                    text: 'Align your top headline and professional summary directly with the target job title and core domain focus.'
+                });
+
+                return {
+                    atsScore,
+                    matchedKeywords,
+                    missingKeywords,
+                    breakdown: {
+                        keywordMatch: {
+                            score: keywordMatchScore,
+                            feedback: `Matched ${matchedKeywords.length} of ${targetKeywords.length} extracted job description keywords.`
+                        },
+                        skillsTechStack: {
+                            score: skillsTechScore,
+                            feedback: matchedKeywords.length >= 6
+                                ? 'Strong core technical stack overlap with role requirements.'
+                                : 'Expand your technical skills list with missing tools from the job description.'
+                        },
+                        experienceAlignment: {
+                            score: experienceScore,
+                            feedback: metricMatches.length >= 2
+                                ? `Detected ${metricMatches.length} quantified impact metrics across your experience.`
+                                : 'Add more measurable business and engineering metrics to experience bullets.'
+                        },
+                        formattingStructure: {
+                            score: formattingScore,
+                            feedback: hasHeaders && hasBullets
+                                ? 'Clean ATS-parseable sections, contact info, and bullet structure.'
+                                : 'Ensure clear section headers and bulleted accomplishments.'
+                        }
+                    },
+                    recommendations
+                };
+            }
+
+            function runLocalCVOptimization(cvText, jdText, analysisData) {
+                const missing = analysisData?.missingKeywords || [];
+                const topMissing = missing.slice(0, 12);
+
+                const verbUpgrades = [
+                    [/^([-•*]\s*)Worked with\b/gim, '$1Partnered cross-functionally with'],
+                    [/^([-•*]\s*)Worked on\b/gim, '$1Architected and delivered'],
+                    [/^([-•*]\s*)Helped\b/gim, '$1Spearheaded and collaborated with'],
+                    [/^([-•*]\s*)Built\b/gim, '$1Engineered and deployed'],
+                    [/^([-•*]\s*)Wrote\b/gim, '$1Developed production-grade'],
+                    [/^([-•*]\s*)Improved\b/gim, '$1Optimized and accelerated'],
+                    [/^([-•*]\s*)Analyzed\b/gim, '$1Conducted deep-dive analysis on'],
+                    [/^([-•*]\s*)Created\b/gim, '$1Designed and automated'],
+                    [/^([-•*]\s*)Fixed\b/gim, '$1Resolved and refactored'],
+                    [/^([-•*]\s*)Maintained\b/gim, '$1Maintained and scaled']
+                ];
+
+                let optimized = cvText.trim();
+                let upgradedCount = 0;
+                for (const [regex, replacement] of verbUpgrades) {
+                    if (regex.test(optimized)) {
+                        optimized = optimized.replace(regex, replacement);
+                        upgradedCount++;
+                    }
+                }
+
+                if (topMissing.length > 0) {
+                    if (/^(TECHNICAL\s+)?SKILLS\s*$/im.test(optimized)) {
+                        optimized += `\nRole-Specific Competencies\n- ${topMissing.join(', ')}`;
+                    } else {
+                        optimized += `\n\nTECHNICAL SKILLS & CORE COMPETENCIES\n- ${topMissing.join(', ')}`;
+                    }
+                }
+
+                const improvements = [
+                    'Preserved 100% of your factual employment timeline, employers, and credentials.',
+                    'Standardized section headings and bulleted skill categories for seamless ATS extraction.'
+                ];
+                if (upgradedCount > 0) {
+                    improvements.unshift(`Upgraded ${upgradedCount} experience bullet action verbs for executive clarity and impact.`);
+                }
+                if (topMissing.length > 0) {
+                    improvements.unshift(`Integrated ${topMissing.length} missing high-impact JD keywords (${topMissing.slice(0, 5).join(', ')}...) into your Technical Skills.`);
+                }
+
+                return {
+                    optimizedCv: optimized,
+                    improvements
+                };
+            }
+
+            // ==========================================
+            // 9. Analyze CV Button Handler
+            // ==========================================
+            function setAnalyzeLoading(isLoading) {
+                analyzeBtn.disabled = isLoading;
+                analyzeIcon.classList.toggle('hidden', isLoading);
+                analyzeSpinner.classList.toggle('hidden', !isLoading);
+                analyzeBtnText.textContent = isLoading ? 'Analyzing CV Against Job Description...' : 'Analyze CV Against Job Description';
+            }
+
+            analyzeBtn.addEventListener('click', async () => {
+                const cvText = cvInput.value.trim();
+                const jdText = jdInput.value.trim();
+
+                if (!cvText || !jdText) {
+                    showToast('Please provide both your CV and the Target Job Description.', 'warning');
+                    return;
+                }
+
+                setAnalyzeLoading(true);
+                optimizedSection.classList.add('hidden');
+
+                const apiKey = getSavedApiKey();
+                let analysisResult = null;
+                let usedAi = false;
+                let fallbackReason = '';
+
+                if (apiKey) {
+                    const payload = {
+                        contents: [{
+                            parts: [{
+                                text: `Evaluate this CV against the Target Job Description and return structured JSON.\n\nCV:\n"""\n${cvText}\n"""\n\nJob Description:\n"""\n${jdText}\n"""`
+                            }]
+                        }],
+                        systemInstruction: {
+                            parts: [{
+                                text: 'You are an expert Applicant Tracking System (ATS) and senior hiring manager. Score the CV strictly and constructively against the Job Description.'
+                            }]
+                        },
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    atsScore: { type: "INTEGER" },
+                                    matchedKeywords: { type: "ARRAY", items: { type: "STRING" } },
+                                    missingKeywords: { type: "ARRAY", items: { type: "STRING" } },
+                                    breakdown: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            keywordMatch: { type: "OBJECT", properties: { score: { type: "INTEGER" }, feedback: { type: "STRING" } }, required: ["score", "feedback"] },
+                                            skillsTechStack: { type: "OBJECT", properties: { score: { type: "INTEGER" }, feedback: { type: "STRING" } }, required: ["score", "feedback"] },
+                                            experienceAlignment: { type: "OBJECT", properties: { score: { type: "INTEGER" }, feedback: { type: "STRING" } }, required: ["score", "feedback"] },
+                                            formattingStructure: { type: "OBJECT", properties: { score: { type: "INTEGER" }, feedback: { type: "STRING" } }, required: ["score", "feedback"] }
+                                        },
+                                        required: ["keywordMatch", "skillsTechStack", "experienceAlignment", "formattingStructure"]
+                                    },
+                                    recommendations: {
+                                        type: "ARRAY",
+                                        items: {
+                                            type: "OBJECT",
+                                            properties: {
+                                                priority: { type: "STRING" },
+                                                text: { type: "STRING" }
+                                            },
+                                            required: ["priority", "text"]
+                                        }
+                                    }
+                                },
+                                required: ["atsScore", "matchedKeywords", "missingKeywords", "breakdown", "recommendations"]
+                            }
+                        }
+                    };
+
+                    try {
+                        analysisResult = await callGeminiAPI(apiKey, payload);
+                        usedAi = true;
+                    } catch (err) {
+                        fallbackReason = err.name === 'AbortError' ? 'Request timed out' : err.message;
+                    }
+                }
+
+                if (!analysisResult) {
+                    analysisResult = runLocalATSAnalysis(cvText, jdText);
+                    usedAi = false;
+                }
+
+                lastAnalysisData = analysisResult;
+                updateEngineIndicators(usedAi, fallbackReason);
+                renderAnalysisDashboard(analysisResult);
+
+                resultsSection.classList.remove('hidden');
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setAnalyzeLoading(false);
+
+                showToast(usedAi ? 'Gemini AI ATS analysis complete!' : 'ATS analysis complete (Local ATS Engine).', usedAi ? 'success' : 'info');
+            });
+
+            function renderAnalysisDashboard(data) {
+                const score = Math.max(0, Math.min(100, Number(data.atsScore) || 0));
+                const circumference = 2 * Math.PI * 52;
+                const offset = circumference - (score / 100) * circumference;
+
+                atsScoreValue.textContent = score;
+                scoreRing.style.strokeDashoffset = offset;
+
+                scoreRing.classList.remove('text-emerald-400', 'text-amber-400', 'text-rose-400', 'text-indigo-500');
+                if (score >= 75) {
+                    scoreRing.classList.add('text-emerald-400');
+                    atsScoreVerdict.textContent = 'Strong ATS Match (75%+)';
+                    atsScoreVerdict.className = 'mt-4 text-xs font-bold px-3.5 py-1.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+                } else if (score >= 50) {
+                    scoreRing.classList.add('text-amber-400');
+                    atsScoreVerdict.textContent = 'Moderate Match — Optimization Recommended';
+                    atsScoreVerdict.className = 'mt-4 text-xs font-bold px-3.5 py-1.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30';
+                } else {
+                    scoreRing.classList.add('text-rose-400');
+                    atsScoreVerdict.textContent = 'Low Match — Needs Keyword Tailoring';
+                    atsScoreVerdict.className = 'mt-4 text-xs font-bold px-3.5 py-1.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30';
+                }
+
+                const categories = [
+                    { key: 'keywordMatch', label: 'Keyword Match', icon: 'fa-key' },
+                    { key: 'skillsTechStack', label: 'Skills & Tech Stack', icon: 'fa-layer-group' },
+                    { key: 'experienceAlignment', label: 'Experience Alignment', icon: 'fa-briefcase' },
+                    { key: 'formattingStructure', label: 'Formatting & Structure', icon: 'fa-list-check' }
+                ];
+
+                breakdownContainer.innerHTML = categories.map(cat => {
+                    const item = data.breakdown?.[cat.key] || { score: 0, feedback: 'No details available.' };
+                    const s = Math.max(0, Math.min(100, Number(item.score) || 0));
+                    const barColor = s >= 75 ? 'bg-emerald-500' : s >= 50 ? 'bg-amber-500' : 'bg-rose-500';
+                    return `
+                        <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid ${cat.icon} text-slate-400 text-xs"></i>
+                                    ${cat.label}
+                                </span>
+                                <span class="text-xs sm:text-sm font-extrabold text-white">${s}%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full ${barColor} rounded-full transition-all duration-700" style="width: ${s}%"></div>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">${escapeHtml(item.feedback)}</p>
+                        </div>
+                    `;
+                }).join('');
+
+                const matched = data.matchedKeywords || [];
+                const missing = data.missingKeywords || [];
+
+                matchedCount.textContent = matched.length;
+                missingCount.textContent = missing.length;
+
+                matchedKeywordsList.innerHTML = matched.length
+                    ? matched.map(kw => `<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">${escapeHtml(kw)}</span>`).join('')
+                    : `<span class="text-xs text-slate-500 italic">No exact keyword matches found.</span>`;
+
+                missingKeywordsList.innerHTML = missing.length
+                    ? missing.map(kw => `<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">${escapeHtml(kw)}</span>`).join('')
+                    : `<span class="text-xs text-emerald-400 italic">Excellent! No critical keywords missing.</span>`;
+
+                const recs = data.recommendations || [];
+                recommendationsList.innerHTML = recs.map(rec => {
+                    const priority = typeof rec === 'object' ? (rec.priority || 'TIP') : 'RECOMMENDED';
+                    const text = typeof rec === 'object' ? (rec.text || '') : String(rec);
+                    const badgeClass = priority.includes('HIGH')
+                        ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                        : 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+                    return `
+                        <li class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs sm:text-sm text-slate-300">
+                            <span class="shrink-0 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider border ${badgeClass} mt-0.5">
+                                ${escapeHtml(priority)}
+                            </span>
+                            <span class="leading-relaxed">${escapeHtml(text)}</span>
+                        </li>
+                    `;
+                }).join('');
+            }
+
+            // ==========================================
+            // 10. Optimize CV Handler
+            // ==========================================
+            function setOptimizeLoading(isLoading) {
+                optimizeBtn.disabled = isLoading;
+                optimizeIcon.classList.toggle('hidden', isLoading);
+                optimizeSpinner.classList.toggle('hidden', !isLoading);
+                optimizeBtnText.textContent = isLoading ? 'Optimizing Your CV...' : 'Yes, Optimize My CV';
+            }
+
+            optimizeBtn.addEventListener('click', async () => {
+                const cvText = cvInput.value.trim();
+                const jdText = jdInput.value.trim();
+
+                if (!cvText || !jdText) {
+                    showToast('CV and Job Description are required.', 'warning');
+                    return;
+                }
+
+                setOptimizeLoading(true);
+                const apiKey = getSavedApiKey();
+                let optResult = null;
+                let usedAi = false;
+
+                if (apiKey) {
+                    const missingList = lastAnalysisData?.missingKeywords?.join(', ') || '';
+                    const payload = {
+                        contents: [{
+                            parts: [{
+                                text: `Rewrite and optimize this CV for the Target Job Description.\n\nOriginal CV:\n"""\n${cvText}\n"""\n\nTarget Job Description:\n"""\n${jdText}\n"""\n\nMissing Keywords to integrate truthfully: ${missingList}\n\nKeep clean plain-text formatting with UPPERCASE section headers (SUMMARY, EXPERIENCE, EDUCATION, TECHNICAL SKILLS) and '-' bullet points.`
+                            }]
+                        }],
+                        systemInstruction: {
+                            parts: [{
+                                text: 'You are an expert executive resume writer and ATS optimization specialist. Tailor the CV to the Job Description by naturally weaving in missing keywords and strengthening action verbs without inventing fake jobs or degrees.'
+                            }]
+                        },
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    optimizedCv: { type: "STRING" },
+                                    improvements: { type: "ARRAY", items: { type: "STRING" } }
+                                },
+                                required: ["optimizedCv", "improvements"]
+                            }
+                        }
+                    };
+
+                    try {
+                        optResult = await callGeminiAPI(apiKey, payload);
+                        usedAi = true;
+                    } catch (err) {
+                        // Seamless fallback to local optimizer
+                    }
+                }
+
+                if (!optResult) {
+                    optResult = runLocalCVOptimization(cvText, jdText, lastAnalysisData);
+                    usedAi = false;
+                }
+
+                originalCvPreview.textContent = cvText;
+                optimizedCvEditor.value = optResult.optimizedCv || '';
+                renderLiveWordPreview();
+
+                improvementsList.innerHTML = (optResult.improvements || []).map(imp => `
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 mt-1 shrink-0"></i>
+                        <span>${escapeHtml(imp)}</span>
+                    </li>
+                `).join('');
+
+                optimizedSection.classList.remove('hidden');
+                optimizedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setOptimizeLoading(false);
+
+                showToast(usedAi ? 'CV optimized with Gemini AI! Choose a Word template below.' : 'CV optimized! Choose a Word template below.', 'success');
+            });
+
+            optimizedCvEditor.addEventListener('input', renderLiveWordPreview);
+
+            // ==========================================
+            // 11. Copy & Plain-Text Download
+            // ==========================================
+            copyCvBtn.addEventListener('click', () => {
+                const text = optimizedCvEditor.value;
+                if (!text.trim()) return;
+                optimizedCvEditor.select();
+                try {
+                    const ok = document.execCommand('copy');
+                    showToast(ok ? 'Optimized CV copied to clipboard!' : 'Unable to copy automatically.', ok ? 'success' : 'warning');
+                } catch {
+                    showToast('Copy failed. Please copy manually.', 'error');
+                }
+            });
+
+            downloadTxtBtn.addEventListener('click', () => {
+                const text = optimizedCvEditor.value;
+                if (!text.trim()) return;
+                triggerBlobDownload(new Blob([text], { type: 'text/plain;charset=utf-8' }), 'Optimized_CV.txt');
+                showToast('Downloaded Optimized_CV.txt', 'success');
+            });
+
+            function triggerBlobDownload(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+
+            // ==========================================
+            // 12. Smart Structured CV Parser (Strict Section Boundaries)
+            // ==========================================
+            function sanitizeLineText(str) {
+                return str.replace(/\.{2,}$/, '').trim();
+            }
+
+            function isSectionHeaderLine(line) {
+                const clean = line.replace(/[:\-]+$/, '').trim();
+                const knownHeaderRegex = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|ACADEMIC BACKGROUND|SKILLS|TECHNICAL SKILLS|TECHNICAL SKILLS & CORE COMPETENCIES|CORE COMPETENCIES|KEY SKILLS|AREAS OF EXPERTISE|PROJECTS|KEY PROJECTS|CERTIFICATIONS|LICENSES & CERTIFICATIONS|AWARDS|HONORS & AWARDS|PUBLICATIONS)$/i;
+                const isAllCaps = clean.length <= 55 && /^[A-Z][A-Z\s&\/\-]+$/.test(clean) && !/^[-•*▪➢➤]/.test(clean);
+                return knownHeaderRegex.test(clean) || isAllCaps;
+            }
+
+            function parseRoleHeaderParts(line) {
+                const dateRegex = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{4}\s*[-–—to]+\s*(?:Present|Current|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{4}|\d{4})|\b(?:19|20)\d{2}\s*[-–—to]+\s*(?:Present|Current|(?:19|20)\d{2})\b|\b(?:19|20)\d{2}\b)$/i;
+
+                if (line.includes('|')) {
+                    const parts = line.split('|').map(p => p.trim()).filter(Boolean);
+                    if (parts.length >= 3) {
+                        const rightText = parts[parts.length - 1];
+                        const leftText = parts.slice(0, -1).join(' — ');
+                        return { leftText, rightText };
+                    } else if (parts.length === 2) {
+                        if (dateRegex.test(parts[1]) || /\d{4}/.test(parts[1])) {
+                            return { leftText: parts[0], rightText: parts[1] };
+                        }
+                        return { leftText: `${parts[0]} — ${parts[1]}`, rightText: '' };
+                    }
+                }
+
+                const m = line.match(dateRegex);
+                if (m && m.index > 3) {
+                    const rightText = m[0].trim();
+                    const leftText = line.slice(0, m.index).replace(/[\s|,\-–—]+$/, '').trim();
+                    return { leftText, rightText };
+                }
+
+                return { leftText: line, rightText: '' };
+            }
+
+            function parseCvStructure(rawText) {
+                const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+                if (lines.length === 0) {
+                    return { name: 'Candidate Resume', title: '', contact: '', sections: [] };
+                }
+
+                const name = lines[0];
+                let title = '';
+                let contact = '';
+                let startIdx = 1;
+
+                if (lines[1] && !isSectionHeaderLine(lines[1])) {
+                    if (lines[1].includes('@') || lines[1].includes('|') || /\d{3}/.test(lines[1])) {
+                        contact = lines[1];
+                        startIdx = 2;
+                    } else {
+                        title = lines[1];
+                        startIdx = 2;
+                        if (lines[2] && !isSectionHeaderLine(lines[2]) && (lines[2].includes('@') || lines[2].includes('|') || /\d{3}/.test(lines[2]))) {
+                            contact = lines[2];
+                            startIdx = 3;
+                        }
+                    }
+                }
+
+                const sections = [];
+                let currentSection = { heading: 'PROFILE', blocks: [] };
+
+                for (let i = startIdx; i < lines.length; i++) {
+                    const line = lines[i];
+                    const nextLine = lines[i + 1] || '';
+
+                    if (isSectionHeaderLine(line)) {
+                        if (currentSection.blocks.length > 0) {
+                            sections.push(currentSection);
+                        }
+                        currentSection = { heading: line.replace(/[:\-]+$/, '').trim().toUpperCase(), blocks: [] };
+                        continue;
+                    }
+
+                    const isExplicitBullet = /^[-•*▪➢➤]\s+/.test(line);
+                    const cleanLine = sanitizeLineText(line.replace(/^[-•*▪➢➤]\s+/, ''));
+
+                    const isSummarySection = /SUMMARY|PROFILE|OBJECTIVE/i.test(currentSection.heading);
+                    const isSkillsSection = /SKILLS|COMPETENCIES|EXPERTISE|TECHNOLOGIES|TOOLS/i.test(currentSection.heading);
+                    const isExperienceSection = /EXPERIENCE|EMPLOYMENT|WORK HISTORY/i.test(currentSection.heading);
+                    const isEduOrCertSection = /EDUCATION|ACADEMIC|CERTIFICATIONS|LICENSES|AWARDS|PROJECTS/i.test(currentSection.heading);
+
+                    if (isExplicitBullet) {
+                        currentSection.blocks.push({
+                            type: 'bullet',
+                            text: cleanLine
+                        });
+                        continue;
+                    }
+
+                    if (isSummarySection) {
+                        currentSection.blocks.push({
+                            type: 'summary',
+                            text: cleanLine
+                        });
+                        continue;
+                    }
+
+                    if (isSkillsSection) {
+                        const colonIdx = cleanLine.indexOf(':');
+                        if (colonIdx > 2 && colonIdx < 45 && cleanLine.slice(colonIdx + 1).includes(',')) {
+                            const cat = cleanLine.slice(0, colonIdx).trim();
+                            const items = sanitizeLineText(cleanLine.slice(colonIdx + 1));
+                            currentSection.blocks.push({ type: 'subhead', text: cat });
+                            currentSection.blocks.push({ type: 'bullet', text: items });
+                            continue;
+                        }
+
+                        const hasCommas = cleanLine.includes(',');
+                        const isShortTitle = !hasCommas && cleanLine.length <= 55 && cleanLine.split(/\s+/).length <= 7;
+                        const nextIsNotHeader = nextLine && !isSectionHeaderLine(nextLine);
+
+                        if (isShortTitle && nextIsNotHeader) {
+                            currentSection.blocks.push({ type: 'subhead', text: cleanLine });
+                        } else {
+                            currentSection.blocks.push({ type: 'bullet', text: cleanLine });
+                        }
+                        continue;
+                    }
+
+                    if (isExperienceSection || isEduOrCertSection) {
+                        const looksLikeRole = line.includes('|') || /\b(19|20)\d{2}\b/.test(line);
+                        if (looksLikeRole) {
+                            const { leftText, rightText } = parseRoleHeaderParts(cleanLine);
+                            currentSection.blocks.push({
+                                type: 'role',
+                                leftText,
+                                rightText
+                            });
+                            continue;
+                        }
+
+                        const startsWithActionVerb = /^(Led|Built|Developed|Designed|Engineered|Architected|Managed|Created|Implemented|Analyzed|Optimized|Improved|Automated|Collaborated|Partnered|Delivered|Spearheaded|Conducted|Maintained|Reduced|Increased|Streamlined|Established|Coordinated|Supported|Prepared|Generated|Monitored|Validated|Migrated|Integrated|Deployed)\b/i.test(cleanLine);
+                        if (startsWithActionVerb || isEduOrCertSection) {
+                            currentSection.blocks.push({
+                                type: 'bullet',
+                                text: cleanLine
+                            });
+                            continue;
+                        }
+                    }
+
+                    currentSection.blocks.push({
+                        type: 'paragraph',
+                        text: cleanLine
+                    });
+                }
+
+                if (currentSection.blocks.length > 0) {
+                    sections.push(currentSection);
+                }
+
+                return { name, title, contact, sections };
+            }
+
+            // Render Live HTML Preview of the Structured Word Layout
+            function renderLiveWordPreview() {
+                const rawText = optimizedCvEditor.value.trim();
+                const parsed = parseCvStructure(rawText);
+
+                let totalBullets = 0;
+                parsed.sections.forEach(s => s.blocks.forEach(b => { if (b.type === 'bullet') totalBullets++; }));
+                parsedStatsBadge.textContent = `${parsed.sections.length} Sections • ${totalBullets} Word Bullets`;
+
+                const sectionsHtml = parsed.sections.map(sec => {
+                    const blocksHtml = sec.blocks.map(b => {
+                        if (b.type === 'role') {
+                            return `
+                                <div class="flex items-baseline justify-between gap-4 pt-2.5 pb-0.5 font-bold text-slate-900">
+                                    <span>${escapeHtml(b.leftText)}</span>
+                                    ${b.rightText ? `<span class="text-slate-600 text-xs shrink-0">${escapeHtml(b.rightText)}</span>` : ''}
+                                </div>
+                            `;
+                        }
+                        if (b.type === 'subhead') {
+                            return `
+                                <div class="pt-2 pb-0.5 font-bold text-slate-900 text-xs sm:text-sm">
+                                    ${escapeHtml(b.text)}
+                                </div>
+                            `;
+                        }
+                        if (b.type === 'summary') {
+                            return `<p class="py-0.5 text-slate-800 leading-relaxed text-justify">${escapeHtml(b.text)}</p>`;
+                        }
+                        if (b.type === 'bullet') {
+                            return `
+                                <div class="flex items-start gap-2.5 pl-4 py-0.5 text-slate-800 leading-relaxed">
+                                    <span class="text-indigo-700 font-bold select-none">&bull;</span>
+                                    <span>${escapeHtml(b.text)}</span>
+                                </div>
+                            `;
+                        }
+                        return `<p class="py-0.5 text-slate-800 leading-relaxed">${escapeHtml(b.text)}</p>`;
+                    }).join('');
+
+                    return `
+                        <div class="pt-2">
+                            <h4 class="font-extrabold text-xs tracking-wider uppercase text-indigo-950 border-b-2 border-slate-800 pb-1 mb-1.5">
+                                ${escapeHtml(sec.heading)}
+                            </h4>
+                            ${blocksHtml}
+                        </div>
+                    `;
+                }).join('');
+
+                wordStructurePreview.innerHTML = `
+                    <div class="border-b-2 border-slate-900 pb-3">
+                        <div class="text-xl font-extrabold tracking-tight text-slate-950">${escapeHtml(parsed.name)}</div>
+                        ${parsed.title ? `<div class="text-sm font-semibold text-indigo-900 mt-0.5">${escapeHtml(parsed.title)}</div>` : ''}
+                        ${parsed.contact ? `<div class="text-xs text-slate-600 mt-1">${escapeHtml(parsed.contact)}</div>` : ''}
+                    </div>
+                    ${sectionsHtml}
+                `;
+            }
+
+            // ==========================================
+            // 13. Multi-Template Microsoft Word (.docx) Generator
+            // ==========================================
+            async function generateAndDownloadDocx(templateType) {
+                const rawText = optimizedCvEditor.value.trim();
+                if (!rawText) {
+                    showToast('No Optimized CV text available to export.', 'warning');
+                    return;
+                }
+
+                const fileMap = {
+                    classic: 'Optimized_CV_ATS_Classic.docx',
+                    executive: 'Optimized_CV_Modern_Executive.docx',
+                    tech: 'Optimized_CV_Tech_Compact.docx'
+                };
+                const filename = fileMap[templateType] || 'Optimized_CV.docx';
+                const parsed = parseCvStructure(rawText);
+
+                if (typeof window.docx === 'undefined') {
+                    downloadHtmlWordFallback(parsed, templateType, filename.replace('.docx', '.doc'));
+                    return;
+                }
+
+                try {
+                    const {
+                        Document, Packer, Paragraph, TextRun, BorderStyle,
+                        AlignmentType, ShadingType, Table, TableRow, TableCell,
+                        WidthType, TabStopType, LevelFormat
+                    } = window.docx;
+
+                    const numberingConfig = {
+                        config: [
+                            {
+                                reference: 'cv-bullet-list',
+                                levels: [
+                                    {
+                                        level: 0,
+                                        format: LevelFormat.BULLET,
+                                        text: '\u2022',
+                                        alignment: AlignmentType.LEFT,
+                                        style: {
+                                            paragraph: {
+                                                indent: { left: 360, hanging: 180 }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+
+                    const borderlessTableBorders = {
+                        top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                        bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                        left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                        right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                        insideHorizontal: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                        insideVertical: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+                    };
+
+                    let doc;
+
+                    if (templateType === 'classic') {
+                        const RIGHT_TAB = 10080;
+                        const children = [
+                            new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                spacing: { after: 40 },
+                                children: [
+                                    new TextRun({ text: parsed.name.toUpperCase(), bold: true, size: 32, font: 'Calibri', color: '000000' })
+                                ]
+                            })
+                        ];
+
+                        if (parsed.title) {
+                            children.push(new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                spacing: { after: 40 },
+                                children: [new TextRun({ text: parsed.title, bold: true, size: 22, font: 'Calibri', color: '222222' })]
+                            }));
+                        }
+                        if (parsed.contact) {
+                            children.push(new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                spacing: { after: 180 },
+                                border: {
+                                    bottom: { color: '000000', space: 6, style: BorderStyle.SINGLE, size: 12 }
+                                },
+                                children: [new TextRun({ text: parsed.contact, size: 20, font: 'Calibri', color: '333333' })]
+                            }));
+                        }
+
+                        for (const sec of parsed.sections) {
+                            children.push(new Paragraph({
+                                keepNext: true,
+                                spacing: { before: 220, after: 90 },
+                                border: {
+                                    bottom: { color: '000000', space: 3, style: BorderStyle.SINGLE, size: 8 }
+                                },
+                                children: [
+                                    new TextRun({ text: sec.heading, bold: true, size: 23, font: 'Calibri', color: '000000' })
+                                ]
+                            }));
+
+                            for (const block of sec.blocks) {
+                                if (block.type === 'role') {
+                                    children.push(new Paragraph({
+                                        keepNext: true,
+                                        tabStops: [{ type: TabStopType.RIGHT, position: RIGHT_TAB }],
+                                        indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                        spacing: { before: 120, after: 45 },
+                                        children: [
+                                            new TextRun({ text: block.leftText, bold: true, size: 21, font: 'Calibri', color: '000000' }),
+                                            ...(block.rightText ? [new TextRun({ text: `\t${block.rightText}`, bold: true, size: 20, font: 'Calibri', color: '333333' })] : [])
+                                        ]
+                                    }));
+                                } else if (block.type === 'subhead') {
+                                    children.push(new Paragraph({
+                                        keepNext: true,
+                                        indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                        spacing: { before: 100, after: 35 },
+                                        children: [new TextRun({ text: block.text, bold: true, size: 21, font: 'Calibri', color: '000000' })]
+                                    }));
+                                } else if (block.type === 'summary') {
+                                    children.push(new Paragraph({
+                                        alignment: AlignmentType.JUSTIFIED,
+                                        indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                        spacing: { after: 70, line: 264 },
+                                        children: [new TextRun({ text: block.text, size: 21, font: 'Calibri', color: '111111' })]
+                                    }));
+                                } else if (block.type === 'bullet') {
+                                    children.push(new Paragraph({
+                                        numbering: { reference: 'cv-bullet-list', level: 0 },
+                                        spacing: { after: 55, line: 264 },
+                                        children: [new TextRun({ text: block.text, size: 21, font: 'Calibri', color: '111111' })]
+                                    }));
+                                } else {
+                                    children.push(new Paragraph({
+                                        indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                        spacing: { after: 70, line: 264 },
+                                        children: [new TextRun({ text: block.text, size: 21, font: 'Calibri', color: '111111' })]
+                                    }));
+                                }
+                            }
+                        }
+
+                        doc = new Document({
+                            numbering: numberingConfig,
+                            sections: [{
+                                properties: {
+                                    page: { margin: { top: 1080, right: 1080, bottom: 1080, left: 1080 } }
+                                },
+                                children
+                            }]
+                        });
+
+                    } else if (templateType === 'executive') {
+                        const NAVY = '1E3A8A';
+                        const SLATE = '334155';
+                        const children = [];
+
+                        const headerTable = new Table({
+                            width: { size: 100, type: WidthType.PERCENTAGE },
+                            borders: {
+                                ...borderlessTableBorders,
+                                bottom: { style: BorderStyle.SINGLE, size: 14, color: NAVY }
+                            },
+                            rows: [
+                                new TableRow({
+                                    children: [
+                                        new TableCell({
+                                            width: { size: 62, type: WidthType.PERCENTAGE },
+                                            margins: { bottom: 140 },
+                                            children: [
+                                                new Paragraph({
+                                                    children: [new TextRun({ text: parsed.name, bold: true, size: 36, font: 'Georgia', color: NAVY })]
+                                                }),
+                                                ...(parsed.title ? [new Paragraph({
+                                                    spacing: { before: 40 },
+                                                    children: [new TextRun({ text: parsed.title, italics: true, bold: true, size: 22, font: 'Calibri', color: SLATE })]
+                                                })] : [])
+                                            ]
+                                        }),
+                                        new TableCell({
+                                            width: { size: 38, type: WidthType.PERCENTAGE },
+                                            margins: { bottom: 140 },
+                                            children: (parsed.contact ? parsed.contact.split('|').map(c => c.trim()) : []).map(part =>
+                                                new Paragraph({
+                                                    alignment: AlignmentType.RIGHT,
+                                                    spacing: { after: 25 },
+                                                    children: [new TextRun({ text: part, size: 19, font: 'Calibri', color: SLATE })]
+                                                })
+                                            )
+                                        })
+                                    ]
+                                })
+                            ]
+                        });
+                        children.push(headerTable);
+
+                        for (const sec of parsed.sections) {
+                            const isSummary = /SUMMARY|PROFILE|OBJECTIVE/i.test(sec.heading);
+
+                            children.push(new Paragraph({
+                                keepNext: true,
+                                spacing: { before: 240, after: 90 },
+                                border: {
+                                    bottom: { color: 'CBD5E1', space: 3, style: BorderStyle.SINGLE, size: 6 }
+                                },
+                                children: [
+                                    new TextRun({ text: sec.heading, bold: true, size: 24, font: 'Georgia', color: NAVY })
+                                ]
+                            }));
+
+                            if (isSummary) {
+                                const summaryBox = new Table({
+                                    width: { size: 100, type: WidthType.PERCENTAGE },
+                                    borders: {
+                                        ...borderlessTableBorders,
+                                        left: { style: BorderStyle.SINGLE, size: 20, color: NAVY }
+                                    },
+                                    rows: [
+                                        new TableRow({
+                                            children: [
+                                                new TableCell({
+                                                    shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F1F5F9' },
+                                                    margins: { top: 130, bottom: 130, left: 200, right: 180 },
+                                                    children: sec.blocks.map(b => new Paragraph({
+                                                        alignment: AlignmentType.JUSTIFIED,
+                                                        indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                                        spacing: { after: 40, line: 264 },
+                                                        children: [new TextRun({ text: b.text || b.leftText, size: 21, font: 'Calibri', color: '1E293B' })]
+                                                    }))
+                                                })
+                                            ]
+                                        })
+                                    ]
+                                });
+                                children.push(summaryBox);
+                            } else {
+                                for (const block of sec.blocks) {
+                                    if (block.type === 'role') {
+                                        const roleTable = new Table({
+                                            width: { size: 100, type: WidthType.PERCENTAGE },
+                                            borders: borderlessTableBorders,
+                                            rows: [
+                                                new TableRow({
+                                                    cantSplit: true,
+                                                    children: [
+                                                        new TableCell({
+                                                            width: { size: 72, type: WidthType.PERCENTAGE },
+                                                            margins: { top: 110, bottom: 35 },
+                                                            children: [
+                                                                new Paragraph({
+                                                                    keepNext: true,
+                                                                    indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                                                    children: [new TextRun({ text: block.leftText, bold: true, size: 22, font: 'Calibri', color: NAVY })]
+                                                                })
+                                                            ]
+                                                        }),
+                                                        new TableCell({
+                                                            width: { size: 28, type: WidthType.PERCENTAGE },
+                                                            margins: { top: 110, bottom: 35 },
+                                                            children: [
+                                                                new Paragraph({
+                                                                    keepNext: true,
+                                                                    alignment: AlignmentType.RIGHT,
+                                                                    indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                                                    children: [new TextRun({ text: block.rightText || '', bold: true, size: 20, font: 'Calibri', color: SLATE })]
+                                                                })
+                                                            ]
+                                                        })
+                                                    ]
+                                                })
+                                            ]
+                                        });
+                                        children.push(roleTable);
+                                    } else if (block.type === 'subhead') {
+                                        children.push(new Paragraph({
+                                            keepNext: true,
+                                            indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                            spacing: { before: 100, after: 35 },
+                                            children: [new TextRun({ text: block.text, bold: true, size: 21, font: 'Calibri', color: NAVY })]
+                                        }));
+                                    } else if (block.type === 'bullet') {
+                                        children.push(new Paragraph({
+                                            numbering: { reference: 'cv-bullet-list', level: 0 },
+                                            spacing: { after: 60, line: 264 },
+                                            children: [new TextRun({ text: block.text, size: 21, font: 'Calibri', color: '1E293B' })]
+                                        }));
+                                    } else {
+                                        children.push(new Paragraph({
+                                            indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                            spacing: { after: 65, line: 264 },
+                                            children: [new TextRun({ text: block.text, size: 21, font: 'Calibri', color: '1E293B' })]
+                                        }));
+                                    }
+                                }
+                            }
+                        }
+
+                        doc = new Document({
+                            numbering: numberingConfig,
+                            sections: [{
+                                properties: {
+                                    page: { margin: { top: 1008, right: 1008, bottom: 1008, left: 1008 } }
+                                },
+                                children
+                            }]
+                        });
+
+                    } else {
+                        const ACCENT = '0F172A';
+                        const TEAL = '0284C7';
+                        const MUTED = '475569';
+                        const RIGHT_TAB_COMPACT = 10800;
+
+                        const children = [
+                            new Paragraph({
+                                spacing: { after: 30 },
+                                children: [
+                                    new TextRun({ text: parsed.name, bold: true, size: 30, font: 'Segoe UI', color: ACCENT }),
+                                    ...(parsed.title ? [new TextRun({ text: `   |   ${parsed.title}`, bold: true, size: 21, font: 'Segoe UI', color: TEAL })] : [])
+                                ]
+                            })
+                        ];
+
+                        if (parsed.contact) {
+                            children.push(new Paragraph({
+                                spacing: { after: 140 },
+                                border: { bottom: { color: TEAL, space: 4, style: BorderStyle.SINGLE, size: 8 } },
+                                children: [new TextRun({ text: parsed.contact, size: 18, font: 'Segoe UI', color: MUTED })]
+                            }));
+                        }
+
+                        for (const sec of parsed.sections) {
+                            const isSkills = /SKILLS|COMPETENCIES|EXPERTISE/i.test(sec.heading);
+
+                            children.push(new Paragraph({
+                                keepNext: true,
+                                spacing: { before: 160, after: 65 },
+                                border: { bottom: { color: 'CBD5E1', space: 2, style: BorderStyle.SINGLE, size: 4 } },
+                                children: [
+                                    new TextRun({ text: sec.heading, bold: true, size: 20, font: 'Segoe UI', color: TEAL })
+                                ]
+                            }));
+
+                            if (isSkills && sec.blocks.some(b => b.type === 'subhead')) {
+                                const skillGroups = [];
+                                let currentGroup = null;
+                                for (const b of sec.blocks) {
+                                    if (b.type === 'subhead') {
+                                        if (currentGroup) skillGroups.push(currentGroup);
+                                        currentGroup = { category: b.text, items: [] };
+                                    } else {
+                                        if (!currentGroup) currentGroup = { category: 'Core Competencies', items: [] };
+                                        currentGroup.items.push(b.text || b.leftText);
+                                    }
+                                }
+                                if (currentGroup) skillGroups.push(currentGroup);
+
+                                const matrixTable = new Table({
+                                    width: { size: 100, type: WidthType.PERCENTAGE },
+                                    borders: {
+                                        top: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' },
+                                        bottom: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' },
+                                        left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                                        right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                                        insideHorizontal: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' },
+                                        insideVertical: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' }
+                                    },
+                                    rows: skillGroups.map(grp => new TableRow({
+                                        cantSplit: true,
+                                        children: [
+                                            new TableCell({
+                                                width: { size: 32, type: WidthType.PERCENTAGE },
+                                                shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F8FAFC' },
+                                                margins: { top: 75, bottom: 75, left: 100, right: 100 },
+                                                children: [new Paragraph({
+                                                    indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                                    children: [new TextRun({ text: grp.category, bold: true, size: 19, font: 'Segoe UI', color: ACCENT })]
+                                                })]
+                                            }),
+                                            new TableCell({
+                                                width: { size: 68, type: WidthType.PERCENTAGE },
+                                                margins: { top: 75, bottom: 75, left: 120, right: 100 },
+                                                children: grp.items.map(itemText => new Paragraph({
+                                                    numbering: { reference: 'cv-bullet-list', level: 0 },
+                                                    spacing: { after: 30, line: 240 },
+                                                    children: [new TextRun({ text: itemText, size: 19, font: 'Segoe UI', color: '1E293B' })]
+                                                }))
+                                            })
+                                        ]
+                                    }))
+                                });
+                                children.push(matrixTable);
+                            } else {
+                                for (const block of sec.blocks) {
+                                    if (block.type === 'role') {
+                                        children.push(new Paragraph({
+                                            keepNext: true,
+                                            tabStops: [{ type: TabStopType.RIGHT, position: RIGHT_TAB_COMPACT }],
+                                            indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                            spacing: { before: 95, after: 35 },
+                                            children: [
+                                                new TextRun({ text: block.leftText, bold: true, size: 20, font: 'Segoe UI', color: ACCENT }),
+                                                ...(block.rightText ? [new TextRun({ text: `\t${block.rightText}`, bold: true, size: 19, font: 'Segoe UI', color: MUTED })] : [])
+                                            ]
+                                        }));
+                                    } else if (block.type === 'subhead') {
+                                        children.push(new Paragraph({
+                                            keepNext: true,
+                                            indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                            spacing: { before: 85, after: 30 },
+                                            children: [new TextRun({ text: block.text, bold: true, size: 19, font: 'Segoe UI', color: ACCENT })]
+                                        }));
+                                    } else if (block.type === 'summary') {
+                                        children.push(new Paragraph({
+                                            alignment: AlignmentType.JUSTIFIED,
+                                            indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                            spacing: { after: 50, line: 248 },
+                                            children: [new TextRun({ text: block.text, size: 19, font: 'Segoe UI', color: '1E293B' })]
+                                        }));
+                                    } else if (block.type === 'bullet') {
+                                        children.push(new Paragraph({
+                                            numbering: { reference: 'cv-bullet-list', level: 0 },
+                                            spacing: { after: 45, line: 248 },
+                                            children: [new TextRun({ text: block.text, size: 19, font: 'Segoe UI', color: '1E293B' })]
+                                        }));
+                                    } else {
+                                        children.push(new Paragraph({
+                                            indent: { left: 0, right: 0, firstLine: 0, hanging: 0 },
+                                            spacing: { after: 55, line: 248 },
+                                            children: [new TextRun({ text: block.text, size: 19, font: 'Segoe UI', color: '1E293B' })]
+                                        }));
+                                    }
+                                }
+                            }
+                        }
+
+                        doc = new Document({
+                            numbering: numberingConfig,
+                            sections: [{
+                                properties: {
+                                    page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } }
+                                },
+                                children
+                            }]
+                        });
+                    }
+
+                    const blob = await Packer.toBlob(doc);
+                    triggerBlobDownload(blob, filename);
+                    showToast(`Downloaded ${filename}`, 'success');
+                } catch (err) {
+                    console.error('DOCX generation error:', err);
+                    downloadHtmlWordFallback(parsed, templateType, filename.replace('.docx', '.doc'));
+                }
+            }
+
+            // Offline HTML-Word (.doc) Fallback
+            function downloadHtmlWordFallback(parsed, templateType, fallbackFilename) {
+                const accent = templateType === 'executive' ? '#1E3A8A' : templateType === 'tech' ? '#0284C7' : '#000000';
+                const font = templateType === 'tech' ? 'Segoe UI, Arial, sans-serif' : 'Calibri, Arial, sans-serif';
+                const sectionsHtml = parsed.sections.map(sec => {
+                    const blocksHtml = sec.blocks.map(b => {
+                        if (b.type === 'role') {
+                            return `
+                                <table style="width:100%; border-collapse:collapse; margin-top:8pt; margin-bottom:2pt;">
+                                    <tr>
+                                        <td style="font-weight:bold; font-size:10.5pt; color:${accent};">${escapeHtml(b.leftText)}</td>
+                                        <td style="text-align:right; font-weight:bold; font-size:9.5pt; color:#475569;">${escapeHtml(b.rightText || '')}</td>
+                                    </tr>
+                                </table>
+                            `;
+                        }
+                        if (b.type === 'subhead') {
+                            return `<p style="margin:6pt 0 2pt 0; font-weight:bold; font-size:10.5pt; color:${accent};">${escapeHtml(b.text)}</p>`;
+                        }
+                        if (b.type === 'summary') {
+                            return `<p style="margin:4pt 0; font-size:10.5pt; line-height:1.35; text-align:justify;">${escapeHtml(b.text)}</p>`;
+                        }
+                        if (b.type === 'bullet') {
+                            return `<li style="margin-bottom:3pt; font-size:10.5pt; line-height:1.35;">${escapeHtml(b.text)}</li>`;
+                        }
+                        return `<p style="margin:4pt 0; font-size:10.5pt; line-height:1.35;">${escapeHtml(b.text)}</p>`;
+                    }).join('');
+
+                    const wrappedHtml = blocksHtml.replace(/(<li[\s\S]*?<\/li>)+/g, match => `<ul style="margin:2pt 0 6pt 18pt; padding-left:6pt;">${match}</ul>`);
+
+                    return `
+                        <h2 style="color:${accent}; border-bottom:1.5pt solid ${accent}; font-size:11.5pt; margin-top:14pt; margin-bottom:6pt; padding-bottom:2pt; text-transform:uppercase;">${escapeHtml(sec.heading)}</h2>
+                        ${wrappedHtml}
+                    `;
+                }).join('');
+
+                const htmlDoc = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head><meta charset='utf-8'><title>${escapeHtml(parsed.name)}</title></head>
+                    <body style="font-family:${font}; color:#111;">
+                        <h1 style="color:${accent}; margin-bottom:2pt; font-size:18pt;">${escapeHtml(parsed.name)}</h1>
+                        ${parsed.title ? `<p style="margin:0 0 2pt 0; font-weight:bold; color:#333;">${escapeHtml(parsed.title)}</p>` : ''}
+                        ${parsed.contact ? `<p style="margin:0 0 12pt 0; font-size:9.5pt; color:#555; border-bottom:1pt solid #ccc; padding-bottom:6pt;">${escapeHtml(parsed.contact)}</p>` : ''}
+                        ${sectionsHtml}
+                    </body></html>
+                `;
+                const blob = new Blob(['\ufeff', htmlDoc], { type: 'application/msword' });
+                triggerBlobDownload(blob, fallbackFilename);
+                showToast(`Downloaded ${fallbackFilename} (Word-compatible fallback)`, 'info');
+            }
+
+            downloadDocxClassicBtn.addEventListener('click', () => generateAndDownloadDocx('classic'));
+            downloadDocxExecutiveBtn.addEventListener('click', () => generateAndDownloadDocx('executive'));
+            downloadDocxTechBtn.addEventListener('click', () => generateAndDownloadDocx('tech'));
+
+            downloadAllDocxBtn.addEventListener('click', async () => {
+                if (!optimizedCvEditor.value.trim()) {
+                    showToast('No Optimized CV text available to export.', 'warning');
+                    return;
+                }
+                showToast('Generating all 3 Microsoft Word (.docx) versions...', 'info');
+                await generateAndDownloadDocx('classic');
+                await new Promise(r => setTimeout(r, 400));
+                await generateAndDownloadDocx('executive');
+                await new Promise(r => setTimeout(r, 400));
+                await generateAndDownloadDocx('tech');
+            });
+        });
+    </script>
+</body>
+</html>
